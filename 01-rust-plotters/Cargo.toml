@@ -1,0 +1,11 @@
+[package]
+name = "golden_curve"
+version = "0.1.0"
+edition = "2021"
+
+# [workspace] declares this a standalone workspace root so Cargo
+# doesn't merge it into the parent Cargo.toml at ~/
+[workspace]
+
+[dependencies]
+plotters = "0.3"
