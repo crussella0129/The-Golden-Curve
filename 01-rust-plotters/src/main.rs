@@ -1,5 +1,9 @@
 fn main() {
-    println!("The Golden Curve");
+    println!("{:<6} {:<20}", "n", "x");
+    println!("{}", "-".repeat(28));
+    for n in [2.0, 3.0, 4.0, 5.0, 10.0, 20.0] {
+        println!("{:<6} {:.16}", n, newton(n));
+    }
 }
 
 fn newton(n: f64) -> f64 {
@@ -18,6 +22,21 @@ fn newton(n: f64) -> f64 {
 
 fn solve_for_n(x: f64) -> f64 {
     (x + 1.0).ln() / x.ln()
+}
+
+/// Sweeps x from x_min to x_max, computes n = ln(x+1)/ln(x) for each point.
+/// Returns Vec<(n, x)> sorted by n ascending (ready to plot with n on x-axis).
+fn generate_curve(x_min: f64, x_max: f64, steps: usize) -> Vec<(f64, f64)> {
+    let mut points: Vec<(f64, f64)> = (0..steps)
+        .map(|i| {
+            let x = x_min + (x_max - x_min) * i as f64 / (steps as f64 - 1.0);
+            let n = solve_for_n(x);
+            (n, x)
+        })
+        .collect();
+    // x increases left to right but n decreases, so sort to get n ascending
+    points.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+    points
 }
 
 #[cfg(test)]
@@ -61,5 +80,16 @@ mod tests {
             (result - 3.0).abs() < 1e-6,
             "Expected n=3, got {result}"
         );
+    }
+
+    #[test]
+    fn test_generate_curve() {
+        let points = generate_curve(1.001, 1.617, 100);
+        assert_eq!(points.len(), 100);
+        assert!(points.iter().all(|(n, _)| *n >= 1.9), "Some n values below 2");
+        assert!(points.iter().all(|(_, x)| *x > 1.0 && *x < 1.62), "x out of range");
+        for i in 1..points.len() {
+            assert!(points[i].0 >= points[i - 1].0, "Not sorted at index {i}");
+        }
     }
 }
