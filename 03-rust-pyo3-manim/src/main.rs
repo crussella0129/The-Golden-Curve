@@ -1,18 +1,42 @@
 use pyo3::prelude::*;
+use pyo3::types::{PyList, PyTuple};
 
 fn main() {
-    // Initialize Python before acquiring the GIL
     pyo3::prepare_freethreaded_python();
 
+    // Rust computes all the math
+    let curve = generate_curve(1.001, 1.617, 800);
+
+    // Filter to display range n in [2, 20]
+    let display: Vec<(f64, f64)> = curve
+        .into_iter()
+        .filter(|(n, _)| *n >= 2.0 && *n <= 20.0)
+        .collect();
+
+    println!("Rust computed {} curve points. Handing to Python...", display.len());
+
     Python::with_gil(|py| {
-        // import_bound() is the PyO3 0.21+ "bound" API
+        // Add current directory to Python path so render.py is importable
         let sys = py.import_bound("sys").expect("Could not import sys");
-        let version: String = sys
-            .getattr("version")
-            .expect("No version attr")
-            .extract()
-            .expect("Could not read version string");
-        println!("Python version: {version}");
+        sys.getattr("path")
+            .unwrap()
+            .call_method1("insert", (0, "."))
+            .unwrap();
+
+        // Import render.py
+        let render = py.import_bound("render").expect("Could not import render.py");
+
+        // Convert Vec<(f64, f64)> to Python list of (n, x) tuples
+        // PyTuple::new_bound is explicit about the Python type — no ambiguity
+        let py_points = PyList::new_bound(
+            py,
+            display.iter().map(|(n, x)| PyTuple::new_bound(py, [*n, *x])),
+        );
+
+        // Call render_scene(points)
+        render
+            .call_method1("render_scene", (py_points,))
+            .expect("render_scene failed");
     });
 }
 
