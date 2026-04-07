@@ -6,7 +6,7 @@
 
 This repo solves and visualizes a single mathematical equation three ways: pure Rust, pure Python with Manim, and Rust doing the math while Python (via PyO3) handles the visualization. Same problem, three toolchains, side by side.
 
-It's a Rosetta Stone, a math exploration, and a structured set of exercises. The finished code is here. The instructions below are for rebuilding it yourself — with enough explanation that you understand *why* each piece works, not just *what* it does.
+It's a Rosetta Stone between Rust and Python, a math exploration, and a structured set of exercises. The finished code is here. The instructions below are for rebuilding it yourself — with enough explanation that you understand *why* each piece works, not just *what* it does.
 
 ---
 
