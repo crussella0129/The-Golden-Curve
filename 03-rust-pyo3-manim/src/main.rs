@@ -1,5 +1,19 @@
+use pyo3::prelude::*;
+
 fn main() {
-    println!("Lesson 3: Rust + PyO3 + Manim");
+    // Initialize Python before acquiring the GIL
+    pyo3::prepare_freethreaded_python();
+
+    Python::with_gil(|py| {
+        // import_bound() is the PyO3 0.21+ "bound" API
+        let sys = py.import_bound("sys").expect("Could not import sys");
+        let version: String = sys
+            .getattr("version")
+            .expect("No version attr")
+            .extract()
+            .expect("Could not read version string");
+        println!("Python version: {version}");
+    });
 }
 
 fn newton(n: f64) -> f64 {
