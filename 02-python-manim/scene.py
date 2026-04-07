@@ -35,5 +35,22 @@ class GoldenCurveScene(Scene):
             stroke_width=1.5,
         )
 
-        self.add(axes, x_label, y_label, curve, asymptote)
+        phi_dot = Dot(axes.c2p(2, PHI), color=GOLD, radius=0.09)
+        phi_label = Text(f"phi ~= {PHI:.4f}", font_size=22, color=GOLD)
+        phi_label.next_to(phi_dot, UP + RIGHT, buff=0.12)
+
+        plastic_dot = Dot(axes.c2p(3, PLASTIC), color=GREEN, radius=0.09)
+        plastic_label = Text(f"P ~= {PLASTIC:.4f}", font_size=22, color=GREEN)
+        plastic_label.next_to(plastic_dot, DOWN + RIGHT, buff=0.12)
+
+        title = Text("The Golden Curve:  x^n = x + 1", font_size=30)
+        title.to_edge(UP)
+
+        self.add(
+            title,
+            axes, x_label, y_label,
+            curve, asymptote,
+            phi_dot, phi_label,
+            plastic_dot, plastic_label,
+        )
         self.wait()
