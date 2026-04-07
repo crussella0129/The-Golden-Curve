@@ -1,0 +1,10 @@
+[package]
+name = "golden_curve_pyo3"
+version = "0.1.0"
+edition = "2021"
+
+# Standalone workspace root - prevents merging into parent Cargo.toml
+[workspace]
+
+[dependencies]
+pyo3 = "0.22"
